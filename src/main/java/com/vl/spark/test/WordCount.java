@@ -9,6 +9,7 @@ public class WordCount
     {
     	SparkSession spark = SparkSession.builder().appName("SparkApp").config("spark.master", "local").getOrCreate();
     	Dataset<String> textFile = spark.read().textFile(args[0]);
+        //Printing output to console
     	System.out.println("Number of lines " + textFile.count());
     	spark.stop();
     }
