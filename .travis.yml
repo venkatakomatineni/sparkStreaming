@@ -1,3 +1,8 @@
 language: java
 sudo: false
 script: mvn clean verify
+
+services:
+  - docker
+before_install:
+  - docker build -t myimage:1.0 .
