@@ -1,3 +1,4 @@
 FROM ubuntu:15.04
-COPY README.md /sparkStreaming/References
+mkdir References
+COPY README.md References
 CMD ["echo", "File Copied Successfully"]
