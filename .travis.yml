@@ -6,3 +6,4 @@ services:
   - docker
 before_install:
   - docker build -t myimage:1.0 .
+  - docker images
