@@ -1,9 +1,99 @@
+# project language
 language: java
-sudo: false
-#script: mvn clean verify
 
-services:
-  - docker
-before_install:
-  - docker build -t myimage:1.0 .
-  - docker images
+jdk:
+  - oraclejdk8
+
+cache:
+  directories:
+  - $HOME/.m2
+
+# To use more customizable environment running in a virtual machine
+sudo: enabled
+
+# Ubuntu distribution to use as test environment
+dist: trusty
+
+# Travis CI uses the .travis.yml file from the branch containing the git commit that triggers the build.
+# Include branches using a safelist, or exclude them using a blocklist.
+branches:
+  only:
+  - master
+  - release
+  - /^DATA-\d+.*$/
+  - /^epic-DATA-\d+.*$/
+
+env:
+  # Environment variables available in all builds
+  global:
+    - DOCKER_STORAGE_OPTIONS="--storage-opt dm.basesize=20G"
+    - DOCKER_IMAGE="${TRAVIS_REPO_SLUG}"
+    - DOCKER_USER="metaci"
+    # DOCKER_PASS
+    - secure: "Q6xcbtFzmUohq7p8muMqQnq/IB/zGyqMdxFx7YXWd410UVPeyLkDYek0S7V1WPWIpsq+4p0KMwg8GeGMVDdsuDGta12AxaMd1d7v8drgJk/943TE2JvALdAwyEvrjSEc8tmyjiCcXEwI7khYFSTornbwyZXR0xphbDsv/TiDMD4ZBzHqHddTnYm3PfW1xVOvyIVPD/3ERCNV4aqzL8CTkpJVgMkQwD3lIdxpPW9Fcl1M3G1+iDsVaWK+cmQR9gxCwTu2fxxCq39uNnUF1AjQyv7EYwQgXH09MpIy6qgc6xjY8iw3Gy8sUaJmVLxflGmQQSL5Wstg2i498S5jpqStESphHB24iXAGRY6Gtm+A/kKfyRtabe3SkE73n0F9dsrHjTcsBpf46x+FRBbKIgxUJchwSON/4nGOvdoQLvO2wtTRVr9GY33s9Y0zqWyAVzOHAWZv+igkdT/SLvMIdNh4cJXCq6lzuMrjo7dzll7aL4bAe9Vlu1Wh3f9kHmMpKmXb6GKWqutCyewOnE9K83gTfuZG3SaNxSvM4lc0dG/S+iiCic5gAWt20EemLWi5xVAiNVlLorvqeFuDmkVTyEiQc/i63EG+lGt0Q99q1l7Je3rL2FQHQ96qaMKQvwSyfGE246AzlA6dUF2N9VfCk2mW+Vn+MxL+WXvvK1a6BpdgQ3M="
+    # META_CI_AWS_ACCESS_KEY_ID
+    - secure: "krduwuiUJ2w4snXASJ+sepv8PBNrcL/L1cAvsxex9SasU0eQnY2Y6LrY0YT4G/YUB/8yJx6mB3Cy/G5jsRuNA/GLKnasXNZ1FZjU3Pw9oAibBv5FuL30WD/vNNcU68794+ez+Tbn8sOGqCTdl+JhdLLqmCPJS4zrIYoloBBK39BvSIuE7q27i9rSitw/fpQThO0sPjB2FLIL3F6zZmhKgWr128J3cycdgc/l8ujZ2vabmfaFEuE0USOx3Zw6kicsUwRfo4e3kwVaUrlyVk1Ejljr8w7K9q9BRIaVHyS3xPtTWaS1fhHXLIvuvyn7huqhf1Lk01FZhNkM9Vq/J0s//7UB5UnUxUcEQX1WkkymyNkzNHEnEH6StPxGKF0ptA6IFWDlGkWBCJMLOSiZdOjHrwvzWPhqkAe4Z/AznHizjEK96WRrHaT/4RHJLLy7yNNBqqTsh3EOnrldMH9qfuyN0Cvuz4pPCLA/SW1iEliC7Wc2YlrYN1djA7TNP8oQNVq7s3lS9xTbrHOCg8B6cy5gQLxbgUNZYFHme+gNKSZFKk9Sec01oPLah53n7lVbB0MvtD7QD9FJDYMzXg5pLyX9WiJTHgXlpWT34kzlXGmSh1xO5eHOHr7rKFvLhF35p5j44l4h77vtDASI2EglQrxJf78Ue3Q/8/zpztybmil9GTQ="
+    # META_CI_AWS_SECRET_ACCESS_KEY
+    - secure: "dIdy5m94HsBuPWK9DQ2nslAl/1n5xHJbEXf4EVzBXpDmmVh1KtXo/4Kt8H+G2KwDWm/CAl2blv4KoUSI5h8v/TEquuTAI8UxrObElAWVhv6gbxIZ5WbiumXIwMHabvPY9wLxCqontpO7bN/nwJJpj6VZwFB9lLrnW0Ul/tmMCJe0wFfTTMvb050xN4sAaIpkzXPIgXRs6W8uoWW5nLjNiAcVCHu6f9xpV8v6N6gwWasNEDn6T0qpD+0W/E3VuSZ+aJ+KKzLSbK2ntu1yuGpL9jiUknml5UOo9B1LFpbr+J9H8WYx25ePraKz53vXegl0Rg3hKEG67zELHrElt2HvfY+mLsr8kRAFRNB9CIbvmhoC4m0Vj5d1ScZUkQnU0i1OZDXrl+6Kok2tn4VG1cQalWZ58TkC3omRMHcMqKMJux8HPy9Eko8cFzmyN60Q7sp6ybM7PuAE5U2LtMdP8T44EfZu+GeRJmS9lEZg1NP0FCAS9f7ed9jmifhr2Lf+0QeDq+uv5r+R77D8PeOboIo10mIitgvcu0bN4MNV5IMDdjwxv4MCuvqaeDignZgmScCHqzAJ0H0XsJHJriJ5S3psDNrTx/aeB0a/mwtkwHiFPxdhDHTC7eInI7a8LLxHzfJURMjcTA86qYGaNJRJi1KkXG/zt//ErGHOPbdXBnCh39o="
+
+# Install any dependencies requires by the project.
+# Note: Travis defaults to `mvn install` if unspecified.
+install:
+  - pip install awscli --upgrade --user
+  - aws --version
+
+# Travis CI clones repositories to a depth of 50 commits, which is only really useful if you are performing git operations, so 
+# See https://docs.travis-ci.com/user/customizing-the-build#git-clone-depth
+git:
+  depth: false
+
+# Phase to run something before script phase.
+before_script:
+  # Force the jar version to be the TRAVIS_BUILD_NUMBER, ignoring the version defined in pom.xml
+  - mvn versions:set -DnewVersion="${TRAVIS_BUILD_NUMBER}"
+  # configure aws, required for S3 deployment
+  - aws configure set aws_access_key_id     $META_CI_AWS_ACCESS_KEY_ID     --profile meta-ci
+  - aws configure set aws_secret_access_key $META_CI_AWS_SECRET_ACCESS_KEY --profile meta-ci
+  - aws --profile meta-ci sts get-caller-identity
+
+  - aws configure set profile.default.role_arn arn:aws:iam::607813682535:role/ci/meta-ci
+  - aws configure set profile.default.source_profile meta-ci
+  - aws --profile default sts get-caller-identity
+
+# Main section. This is where build and test command(s) are specified.
+# If tests pass, publish Docker image (note that we do this here because we want a failed Docker image publish to fail the entire build)
+script:
+  - mvn --batch-mode --show-version clean test package
+
+deploy:
+  - provider: script
+    script: bash ci/deploy.sh dev
+    skip_cleanup: true
+    on:
+      all_branches: true
+      condition: $TRAVIS_BRANCH =~ ^(DATA-[0-9]+.*)|(epic-DATA-[0-9]+.*)$
+  - provider: script
+    script: bash ci/deploy.sh staging
+    skip_cleanup: true
+    on:
+      all_branches: true
+      condition: $TRAVIS_BRANCH == master
+  - provider: script
+    script: bash ci/deploy.sh prod
+    skip_cleanup: true
+    on:
+      all_branches: true
+      condition: $TRAVIS_BRANCH == release
+
+# Notify via Slack and team email list when a build breaks or has been fixed
+# See https://docs.travis-ci.com/user/notifications
+notifications:
+  slack:
+    on_success: always
+    rooms:
+      # chanzuckerbergteam:<semi-secret token>#dpt-ci-notifications
+      - secure: "MhQ3gUplKDvRxXHD+HxbrdxsMiYKKfye3YQdS+gcgm6s45ZTRhih6XePC8+f9XtHS+J6w9umDXsPdG2dXzttRD7QMGEjFRv876VKvP6Fah4gDqaqCZTquSEB0xsT3Eh4HMKf1u1bUbxTYR07Br24P/rWhib2qTyhq6Xi+fL5fw4VaVjCZy5fSOpjUW/mkp83TtXNBYYzcjNLpe8mK/0oH4K2mzdIgpAFvIAr8sxRqS8uKU80alc5onTS4YpEkz/L4AwPdWAoo8fGDF+1KOzWbeCQBPcWlTrzBGp0rpeS0TSehXu3XrRhH7rRFDNeNR0NI6TEnGFT4a8NquOI1TFrp4jh4WkCPJH9EQ5wTx8J5OGmT/xGSAmqrSlzxpRP1SROTt4PBWELy7ALh4pLQNMP/6geFhnESj39v1GjkFbxTv4ekMBXsunZZ8NjK6BlcBpvqIa2qs2tuBMLKY4cIqYD52bvkx1javX9HddOdQujgNCsvpNGRI8IKCf5OJDAqAM1f7HPrOSlTyS9X0Wf5Vcu+0W5IdCeHC5pg4HkOYlAYdCD7fNu+Ac6EBUW6yNwfRP2W2Jsn3DRYGWJ5qG2sK+E0EqerwILW/N7Vku3QMJ+OtY8cW0EiwTVxLYb4cx6vxj0SZlZv50EjtQOiWyLCNsuvrzyBMDmvWUzKZ5i8sZVLCg="
+  # Send build failures (only) to author only, so they can deal with it. Note that this uses the failing commit author's email address.
+  email:
+    on_success: change
+    on_failure: always
