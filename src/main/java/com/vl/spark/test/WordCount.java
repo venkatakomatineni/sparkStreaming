@@ -10,6 +10,7 @@ public class WordCount
     	SparkSession spark = SparkSession.builder().appName("SparkApp").config("spark.master", "local").getOrCreate();
     	Dataset<String> textFile = spark.read().textFile("README.md");
     	System.out.println("Number of lines " + textFile.count());
+    	System.out.println("File path " + textFile);
     	spark.stop();
     }
 }
